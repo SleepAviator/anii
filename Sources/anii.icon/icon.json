@@ -1,0 +1,113 @@
+{
+  "features" : [
+  ],
+  "fill-specializations" : [
+    {
+      "value" : {
+        "linear-gradient" : [
+          "display-p3:0.82019,0.81769,0.80484,1.00000",
+          "display-p3:0.96424,0.95159,0.91574,1.00000"
+        ]
+      }
+    },
+    {
+      "appearance" : "dark",
+      "value" : {
+        "linear-gradient" : [
+          "display-p3:0.82019,0.81769,0.80484,1.00000",
+          "display-p3:0.96424,0.95159,0.91574,1.00000"
+        ]
+      }
+    }
+  ],
+  "groups" : [
+    {
+      "blur-material" : null,
+      "hidden" : false,
+      "layers" : [
+        {
+          "fill" : {
+            "linear-gradient" : [
+              "display-p3:0.57689,0.15288,0.00000,1.00000",
+              "display-p3:0.76785,0.44562,0.00000,1.00000"
+            ]
+          },
+          "image-name" : "Image.svg",
+          "name" : "Image",
+          "opacity" : 1,
+          "position" : {
+            "scale" : 1,
+            "translation-in-points" : [
+              194,
+              0
+            ]
+          }
+        },
+        {
+          "blend-mode" : "normal",
+          "fill" : {
+            "linear-gradient" : [
+              "display-p3:0.56128,0.76672,0.07129,1.00000",
+              "display-p3:0.66699,0.78186,0.15137,1.00000"
+            ]
+          },
+          "image-name" : "Image 4.svg",
+          "name" : "Image 4",
+          "opacity" : 0.4,
+          "position" : {
+            "scale" : 1.4,
+            "translation-in-points" : [
+              -352,
+              4
+            ]
+          }
+        },
+        {
+          "blend-mode" : "normal",
+          "fill" : {
+            "linear-gradient" : [
+              "display-p3:0.64457,0.66763,0.03760,1.00000",
+              "display-p3:0.74904,0.68376,0.04443,1.00000"
+            ]
+          },
+          "image-name" : "Image 3.svg",
+          "name" : "Image 3",
+          "opacity" : 0.6,
+          "position" : {
+            "scale" : 1.4,
+            "translation-in-points" : [
+              -196,
+              0
+            ]
+          }
+        }
+      ],
+      "lighting" : "individual",
+      "shadow" : {
+        "kind" : "layer-color",
+        "opacity" : 0.5
+      },
+      "specular" : true,
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.6
+      }
+    },
+    {
+      "layers" : [
+
+      ],
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.3
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "squares" : "shared"
+  }
+}
