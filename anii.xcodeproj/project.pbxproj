@@ -40,6 +40,11 @@
 		EDC63BB4226DCAA12C2B871B /* OpenSubtitles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73B5CF4F7303828F6D9D3938 /* OpenSubtitles.swift */; };
 		F26D290E9B6A5E128458D67D /* anii.icon in Resources */ = {isa = PBXBuildFile; fileRef = 1492346D8997CE482AEE81E6 /* anii.icon */; };
 		FC4309D9140A3C441AA4474A /* AniiApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9D4F1EBCF3A24714ACB622D /* AniiApp.swift */; };
+		CD91E76B50B391494C44C254 /* BulletComments.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA33174C1AF23995D1531BE3 /* BulletComments.swift */; };
+		5BE040B6EC4FD5468617AA9F /* BulletCommentService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C2334DCD1D81D8BEFAE208C /* BulletCommentService.swift */; };
+		E6CD3CC8A247DABCF60FAE4D /* BulletCommentController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FEE39275AC3F124CE557877 /* BulletCommentController.swift */; };
+		DA339D7040148D8599250CEC /* BulletCommentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDF71EACB741A0446BD7DEAF /* BulletCommentsView.swift */; };
+		B65A24FBEE513C5244109B85 /* BulletCommentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 907CEE8BE282F47937DC6B8A /* BulletCommentTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -95,6 +100,11 @@
 		F07B1981528A672AC51E1B01 /* aniiTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = aniiTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F4E29BDCA6131108E776643C /* primary.srt */ = {isa = PBXFileReference; path = primary.srt; sourceTree = "<group>"; };
 		F9BA02D0BA1FCF7EB61BA1FE /* PictureInPicture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PictureInPicture.swift; sourceTree = "<group>"; };
+		EA33174C1AF23995D1531BE3 /* BulletComments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BulletComments.swift; sourceTree = "<group>"; };
+		1C2334DCD1D81D8BEFAE208C /* BulletCommentService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BulletCommentService.swift; sourceTree = "<group>"; };
+		9FEE39275AC3F124CE557877 /* BulletCommentController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BulletCommentController.swift; sourceTree = "<group>"; };
+		DDF71EACB741A0446BD7DEAF /* BulletCommentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BulletCommentsView.swift; sourceTree = "<group>"; };
+		907CEE8BE282F47937DC6B8A /* BulletCommentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BulletCommentTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -145,6 +155,10 @@
 		95515F6189FDE3317907A0E5 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				EA33174C1AF23995D1531BE3 /* BulletComments.swift */,
+				1C2334DCD1D81D8BEFAE208C /* BulletCommentService.swift */,
+				9FEE39275AC3F124CE557877 /* BulletCommentController.swift */,
+				DDF71EACB741A0446BD7DEAF /* BulletCommentsView.swift */,
 				1492346D8997CE482AEE81E6 /* anii.icon */,
 				A9D4F1EBCF3A24714ACB622D /* AniiApp.swift */,
 				1731174CDAE2E9F60BA3C92E /* Assets.xcassets */,
@@ -184,6 +198,7 @@
 		F10A8A24F7AD8C1801BA33FB /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				907CEE8BE282F47937DC6B8A /* BulletCommentTests.swift */,
 				370BA49FAF1BDF720E3EE9AA /* PlaybackTests.swift */,
 				EAEE091FEE50F5FD38A5D924 /* PlaybackToolsTests.swift */,
 				EB8234182F71F7D023227B17 /* SubtitleServiceTests.swift */,
@@ -330,6 +345,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B65A24FBEE513C5244109B85 /* BulletCommentTests.swift in Sources */,
 				204217CF900EBE0AA38A8ACC /* PlaybackTests.swift in Sources */,
 				178872FC298182052BBABB53 /* PlaybackToolsTests.swift in Sources */,
 				2D244B2A489AFE69A7348875 /* SubtitleServiceTests.swift in Sources */,
@@ -340,6 +356,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CD91E76B50B391494C44C254 /* BulletComments.swift in Sources */,
+				5BE040B6EC4FD5468617AA9F /* BulletCommentService.swift in Sources */,
+				E6CD3CC8A247DABCF60FAE4D /* BulletCommentController.swift in Sources */,
+				DA339D7040148D8599250CEC /* BulletCommentsView.swift in Sources */,
 				FC4309D9140A3C441AA4474A /* AniiApp.swift in Sources */,
 				E3884DC9B6CF0D1C01A365B6 /* FrameImages.swift in Sources */,
 				42152E6C7B073FE5520A5594 /* MPVEngine.swift in Sources */,

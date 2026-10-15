@@ -34,6 +34,7 @@ struct PlayerView: View {
     @State private var importSubtitle = false
     @State private var subtitleTarget: SubtitleTarget = .primary
     @State private var showSubtitleSearch = false
+    @State private var showBulletComments = false
     @State private var showURL = false
     @State private var showAbout = false
     @State private var urlText = ""
@@ -184,6 +185,7 @@ struct PlayerView: View {
         .sheet(isPresented: $showURL) { urlSheet }
         .sheet(isPresented: $showAbout) { aboutSheet }
         .sheet(isPresented: $showSubtitleSearch) { SubtitleSearchView(player: model) }
+        .sheet(isPresented: $showBulletComments) { BulletCommentsView(player: model) }
         .sheet(isPresented: $model.showingJumpToTime) { JumpToTimeView(model: model) }
         .sheet(item: $model.capturedFrame) { FrameCaptureView(frame: $0) }
         .alert(item: $model.failure) { failure in
@@ -215,7 +217,7 @@ struct PlayerView: View {
             guard !Task.isCancelled, model.hasMedia, !model.paused, !model.musicMode,
                   !model.controlPreferences.keepControlsVisible, !model.controlPreferences.dockControls,
                   !scrubbing, !pickingSpeed, !model.touchSpeedBoostActive, panel == nil,
-                  !showURL, !showImporter, !showAbout, !showSubtitleSearch else { return }
+                  !showURL, !showImporter, !showAbout, !showSubtitleSearch, !showBulletComments else { return }
             controlsVisible = false
         }
     }
@@ -231,6 +233,7 @@ struct PlayerView: View {
                     RepeatToolsMenu(model: model, titled: true)
                     Button("Load External Subtitle…", systemImage: "captions.bubble", action: openSubtitles)
                     Button("Find Online Subtitles…", systemImage: "magnifyingglass") { showSubtitleSearch = true }
+                    Button("Bullet Comments…", systemImage: "text.bubble") { showBulletComments = true }
                     Button(model.musicMode ? "Video Mode" : "Music Mini-player", systemImage: "music.note") { model.toggleMusicMode() }
                     if !model.musicMode {
                         Button(model.pictureInPictureActive ? "Stop Picture in Picture" : "Picture in Picture",
@@ -258,6 +261,12 @@ struct PlayerView: View {
                     .accessibilityIdentifier("mediaTitle")
             }
             Spacer(minLength: 0)
+            Button { showBulletComments = true } label: {
+                Image(systemName: "text.bubble").frame(width: 44, height: 44)
+            }
+            .accessibilityLabel("Bullet comments")
+            .accessibilityIdentifier("bulletCommentsButton")
+            .disabled(!model.hasMedia || model.musicMode)
             Button { togglePanel(.playlist) } label: {
                 Image(systemName: "list.bullet").frame(width: 44, height: 44)
             }

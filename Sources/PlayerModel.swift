@@ -69,6 +69,8 @@ final class PlayerModel: ObservableObject {
     @Published private(set) var savedPlaylists: [SavedPlaylist] = []
     @Published private(set) var readingPlaylist = false
     let seekPreview = SeekPreview()
+    let bulletComments: BulletCommentController
+    private var bulletClock = BulletPlaybackClock()
     private let playlistStore: PlaylistStore
     private var playlistFolders: Set<URL> = []
     private var folderRequest = UUID()
@@ -90,7 +92,7 @@ final class PlayerModel: ObservableObject {
     private var seekTimeout: Task<Void, Never>?
     private var scopedURLs: Set<URL> = []
     private var pendingSecondarySubtitle: String?
-    private var inBackground = false
+    @Published private var inBackground = false
     private var reachedEnd = false
     private var lastVolume = 100.0
     private var selectedVideoID = "auto"
@@ -99,8 +101,9 @@ final class PlayerModel: ObservableObject {
     private var speedBeforeTouchBoost: Double?
     private lazy var mediaSession = MediaSession(player: self)
 
-    init(playlistStore: PlaylistStore = PlaylistStore()) {
+    init(playlistStore: PlaylistStore = PlaylistStore(), bulletComments: BulletCommentController? = nil) {
         self.playlistStore = playlistStore
+        self.bulletComments = bulletComments ?? BulletCommentController()
         do { subtitleStyle = try SubtitleStyle.load() }
         catch { failure = PlayerFailure(message: "Unable to read saved subtitle settings: \(error.localizedDescription)") }
         do { controlPreferences = try ControlPreferences.load() }
@@ -109,6 +112,11 @@ final class PlayerModel: ObservableObject {
 
     var currentIndex: Int? { playlist.firstIndex { $0.id == currentID } }
     var hasMedia: Bool { currentID != nil }
+    var canRenderBulletComments: Bool { hasMedia && !musicMode && !inBackground && !pictureInPictureActive && !pictureInPictureStarting }
+    var bulletCommentTime: Double {
+        if backend == .native, let time = surface?.nativeLayer.player?.currentTime().seconds, time.isFinite { return time }
+        return bulletClock.time(now: CACurrentMediaTime())
+    }
     var currentURL: URL? { currentIndex.map { playlist[$0].url } }
     var isAudioOnly: Bool { !tracks.isEmpty && !tracks.contains { $0.kind == "video" && !$0.albumArt } }
     var videoTracks: [MediaTrack] { tracks.filter { $0.kind == "video" && !$0.albumArt } }
@@ -125,6 +133,7 @@ final class PlayerModel: ObservableObject {
     func attach(to surface: VideoSurfaceView) {
         guard self.surface == nil else { return }
         self.surface = surface
+        surface.bulletOverlay.bind(player: self, surface: surface)
         surface.onResize = { [weak self] _ in self?.resizeVideo() }
         _ = mediaSession
         if let url = currentURL { startEngine(backend ?? .native, url: url, position: position, paused: paused) }
@@ -221,6 +230,7 @@ final class PlayerModel: ObservableObject {
             pictureInPicture?.stop(); return
         }
         endTouchSpeedBoost(); seekPreview.cancel(); clearLoop()
+        bulletComments.openMedia(nil)
         generation = UUID(); pendingEngineStart = nil; pendingActions = []
         let previous = engine
         previous?.set("pause", "yes"); engine = nil
@@ -254,6 +264,11 @@ final class PlayerModel: ObservableObject {
     }
 
     func openIncoming(_ url: URL) {
+        if url.isFileURL, ["xml", "json"].contains(url.pathExtension.lowercased()) {
+            guard hasMedia else { report("Open a video before importing its bullet comments."); return }
+            bulletComments.importFile(url)
+            return
+        }
         if url.scheme == "anii" {
             guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
                   let text = components.queryItems?.first(where: { $0.name == "url" })?.value,
@@ -261,7 +276,7 @@ final class PlayerModel: ObservableObject {
                 report("This media link is incomplete.")
                 return
             }
-            if media.isFileURL { add([media]) }
+            if media.isFileURL { openIncoming(media) }
             else { _ = openStream(text) }
         } else if url.isFileURL { add([url]) }
         else { _ = openStream(url.absoluteString) }
@@ -291,6 +306,8 @@ final class PlayerModel: ObservableObject {
         canStepForward = false; canStepBackward = false
         capturingFrame = false; capturedFrame = nil
         currentID = id
+        bulletComments.openMedia(entry.url)
+        bulletClock.sample(position: 0, rate: 0, now: CACurrentMediaTime())
         title = entry.title
         position = 0
         duration = 0
@@ -471,6 +488,7 @@ final class PlayerModel: ObservableObject {
 
     private func applySpeed(_ value: Double) {
         speed = value
+        bulletClock.setRate(paused || buffering || loading ? 0 : value, now: CACurrentMediaTime())
         if let native = engine as? NativeEngine, !native.supportsRate(value) {
             withMPV("AVPlayer cannot play this item at \(value.formatted())×.") { [weak self] in
                 guard let self else { return }
@@ -933,6 +951,13 @@ final class PlayerModel: ObservableObject {
         }
         synchronizeTimebase()
         pictureInPicture?.update()
+        let bulletRate = paused || buffering || loading ? 0 : speed
+        switch event {
+        case .number("time-pos", _), .seekFinished:
+            bulletClock.sample(position: position, rate: bulletRate, now: CACurrentMediaTime())
+        default:
+            bulletClock.setRate(bulletRate, now: CACurrentMediaTime())
+        }
         mediaSession.update(force: { if case .number("time-pos", _) = event { return false }; return true }())
     }
 

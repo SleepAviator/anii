@@ -9,5 +9,7 @@ These fixtures were generated for the iPadOS playback tests. They contain FFmpeg
 | `music.m4a` | A 12-second synthetic AAC tone; title, artist, and album identify it as a test fixture (the title was renamed to “anii Test Music” for the standalone app) |
 | `primary.srt` | Authored bottom-track test text |
 | `secondary.srt` | Authored top-track test text |
+| `bullet-comments.json` | Authored anii-format comments for the 12-second video; includes title, duration, color, and positioning |
+| `bullet-comments.xml` | Authored comments in Bilibili's XML format, with no third-party comment content |
 
 FFmpeg's `testsrc2`/`sine` generators can produce replacement video/audio fixtures with these dimensions and duration; mux `primary.srt` as a SubRip track for the Matroska case. Frame stepping, captures, subtitles, and timing tests rely on synthetic media with visible frame changes. FFmpeg's executable and codec implementations are not included in this fixture directory.

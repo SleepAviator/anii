@@ -53,6 +53,33 @@ Swift Package Manager downloads native dependencies from their suppliers. Its ca
 - Subtitles support embedded/external tracks, primary and secondary tracks, appearance/position/encoding controls, and OpenSubtitles search/download.
 - Playback tools include cached seek thumbnails, supported frame stepping, clean frame capture/sharing, keyboard shortcuts, and docked/resizable panels.
 
+## Bullet comments (弹幕)
+
+While playing a video, tap the **speech-bubble button** in the top bar, or choose **Bullet Comments…** in the file menu. You can import Bilibili XML, Dandanplay JSON, or anii JSON from Files, enable individual sources, and adjust each source's delay. Positive delay displays comments later. Imported data and source settings are saved locally for that video; a changed cloud URL may require selecting its sources again.
+
+The same native overlay works with AVPlayer and mpv. Comments pause with playback, follow seeking and speed changes, and reserve the lower part of the picture for subtitles. Dense comments are limited to available lanes. Identical comments at approximately the same timestamp are deduplicated across enabled sources. The overlay appears inside anii; it is not included in system Picture in Picture or clean frame captures.
+
+For online matching, open **Provider Setup** and enter your own approved Dandanplay application ID and secret. Credentials are stored in the device Keychain. Tap **Find Matching Video** to send the entered title and playback duration, or use **Search Title Instead**, then confirm an episode before loading its comments. No video data, private folder path, or cloud URL is sent. Dandanplay's current response does not include candidate durations; the app does not invent a duration confidence score. Sources can require a timing adjustment when cuts differ.
+
+**Include related platforms** loads the provider's aggregated feed. It remains labeled as an aggregated source because the API does not guarantee each comment's original platform. Sources imported separately can always be enabled or disabled independently. Loaded comments are retained locally; reselecting a recently loaded source uses the six-hour cache. **Refresh** explicitly requests a newer copy. There is no continuous socket connection, posting, or background polling in this implementation.
+
+Local imports work without any account. iyf.tv integration is not enabled: its website endpoints have no verified third-party access agreement or stable documented API. See [Dandanplay's integration guide and usage requirements](https://doc.dandanplay.com/open/). No application credential is supplied with this project.
+
+An anii JSON comment file has this structure (times and duration are seconds; mode is `scroll`, `top`, or `bottom`):
+
+```json
+{
+  "title": "Example episode comments",
+  "duration": 1440,
+  "comments": [
+    { "time": 12.5, "text": "A timed comment", "mode": "scroll", "color": "#FFFFFF" },
+    { "time": 30, "text": "A fixed comment", "mode": "top", "color": "#FFD700" }
+  ]
+}
+```
+
+Imports are limited to 20 MB, eight sources per video, and 100,000 total comments. Malformed rows and unsupported XML modes are reported as skipped. XML external entities and scripted comments are not supported. Synthetic examples are in [Tests/Fixtures/bullet-comments.json](Tests/Fixtures/bullet-comments.json) and [Tests/Fixtures/bullet-comments.xml](Tests/Fixtures/bullet-comments.xml).
+
 ## Accounts and media
 
 OpenSubtitles access requires the user's own registered API key, application User-Agent, and account. Credentials entered at runtime are stored in the device Keychain; login tokens stay in memory. Tests use an injected mock provider with obviously fictitious credentials. No provider key, downloaded subtitle collection, or user media is distributed.
@@ -62,6 +89,8 @@ The app does not host downloadable plugins or autoload mpv scripts/configuration
 ## Tests and current limits
 
 `Tests` and `UITests` contain the maintained service, playback, playback-tools, and touch tests. [Fixture provenance](Tests/Fixtures/README.md) describes the synthetic media. Service tests use mock network responses; some playback/UI checks need a simulator or device and a local fixture server.
+
+Bullet-comment validation on **2026-10-15** added **16 unit/integration checks and one UI check**, covering parsing/encodings, matching requests, credential-safe redirects, persistence, stale-request cancellation, source filters, timing, both playback engines, document opening, and panel controls. These checks passed, as did the existing 18 unit/integration and three UI checks in the regression run. The physical-iPad SDK build also succeeded without signing. Provider requests were tested against mock responses; live Dandanplay credentials and physical-device comment playback still need validation.
 
 The standalone **anii 0.8.1** project built successfully with Xcode 27 and the pinned dependencies on 2026-10-10. The iOS 26.5 iPad simulator run passed **18/18 unit/integration tests** and **3/3 UI tests**, including both playback engines, speed switching, PiP, subtitle fallback, playlists, frame capture, and touch gestures. Tested application/build/fixture files were verified against this repository by checksum. Physical-device behavior has not been retested for the rename or the recent speed-switching fixes.
 

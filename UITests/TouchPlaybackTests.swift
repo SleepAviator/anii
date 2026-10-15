@@ -4,6 +4,57 @@
 import XCTest
 
 final class TouchPlaybackTests: XCTestCase {
+    func testBulletCommentPanelAndProviderSetup() throws {
+        #if !targetEnvironment(simulator)
+        throw XCTSkip("This UI case uses a loopback fixture server on the simulator host.")
+        #else
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.open(URL(string: "anii://open?url=http%3A%2F%2F127.0.0.1%3A8769%2Fplayback.mp4")!)
+        XCTAssertTrue(app.buttons["Pause"].waitForExistence(timeout: 12))
+        app.buttons["Pause"].tap()
+        app.buttons["bulletCommentsButton"].tap()
+        XCTAssertTrue(app.switches["showBulletComments"].waitForExistence(timeout: 4))
+        let visibility = app.switches["showBulletComments"]
+        let previous = visibility.value as? String
+        visibility.coordinate(withNormalizedOffset: CGVector(dx: 0.93, dy: 0.5)).tap()
+        let changed = NSPredicate(format: "value != %@", previous ?? "")
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: changed, object: visibility)], timeout: 3), .completed)
+        visibility.coordinate(withNormalizedOffset: CGVector(dx: 0.93, dy: 0.5)).tap()
+        XCTAssertTrue(app.buttons["importBulletComments"].exists)
+        app.buttons["Provider Setup"].tap()
+        XCTAssertTrue(app.textFields["App ID"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.secureTextFields["App Secret"].exists)
+        app.buttons["Cancel"].tap()
+
+        let file = FileManager.default.temporaryDirectory.appending(path: "bullet-ui-\(UUID().uuidString).json")
+        defer { try? FileManager.default.removeItem(at: file) }
+        try Data(#"{"title":"UI synthetic source","duration":12,"comments":[{"time":1,"text":"Synthetic UI import","mode":"top"}]}"#.utf8).write(to: file)
+        // Exercise the same document-open path used by Files, without adding a test-only app hook.
+        var incoming = URLComponents()
+        incoming.scheme = "anii"; incoming.host = "open"
+        incoming.queryItems = [URLQueryItem(name: "url", value: file.absoluteString)]
+        // app.open launches a fresh app instance; system.open delivers to the running player.
+        XCUIDevice.shared.system.open(try XCTUnwrap(incoming.url))
+        let delivery = XCTAttachment(screenshot: app.screenshot())
+        delivery.name = "Comment document delivery"; delivery.lifetime = .keepAlways; add(delivery)
+        XCTAssertTrue(app.staticTexts["UI synthetic source"].waitForExistence(timeout: 5))
+        let source = app.switches.matching(NSPredicate(format: "identifier BEGINSWITH %@", "bulletSource-")).firstMatch
+        let enabled = source.value as? String
+        source.coordinate(withNormalizedOffset: CGVector(dx: 0.93, dy: 0.5)).tap()
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: NSPredicate(format: "value != %@", enabled ?? ""), object: source)], timeout: 3), .completed)
+        source.coordinate(withNormalizedOffset: CGVector(dx: 0.93, dy: 0.5)).tap()
+        app.steppers.firstMatch.buttons["Increment"].tap()
+        XCTAssertTrue((app.textFields["Delay"].value as? String)?.contains("0.5") == true)
+        let capture = XCTAttachment(screenshot: app.screenshot())
+        capture.name = "Bullet comments sources and matching"
+        capture.lifetime = .keepAlways; add(capture)
+        app.buttons["Remove"].tap()
+        app.buttons["Done"].tap()
+        app.terminate()
+        #endif
+    }
+
     func testPlaybackToolsAndSavedPlaylistUI() throws {
         #if !targetEnvironment(simulator)
         throw XCTSkip("This UI case uses a loopback fixture server on the simulator host.")

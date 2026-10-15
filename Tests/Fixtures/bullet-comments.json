@@ -1,0 +1,9 @@
+{
+  "title": "Synthetic JSON comments",
+  "duration": 12,
+  "comments": [
+    { "time": 0.25, "text": "Hello from the JSON source", "mode": "scroll", "color": "#FFFFFF" },
+    { "time": 2, "text": "Pause and seek to check synchronization", "mode": "top", "color": "#FFD700" },
+    { "time": 6, "text": "This is synthetic test media", "mode": "scroll", "color": "#80FFFF" }
+  ]
+}

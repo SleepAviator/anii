@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i>
+  <d p="0.5,1,25,16777215,0,0,fixture,1">Hello from the XML source</d>
+  <d p="3,5,25,16776960,0,0,fixture,2">Synthetic top comment</d>
+  <d p="7,4,25,65535,0,0,fixture,3">Synthetic bottom comment</d>
+</i>

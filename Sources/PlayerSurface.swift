@@ -8,6 +8,7 @@ import UIKit
 final class VideoSurfaceView: UIView {
     let nativeLayer = AVPlayerLayer()
     let sampleLayer = AVSampleBufferDisplayLayer()
+    let bulletOverlay = BulletOverlayView()
     let timebase: CMTimebase
     var onResize: ((CGSize) -> Void)?
     var onFramePresented: ((CMSampleBuffer) -> Void)?
@@ -83,6 +84,7 @@ final class VideoSurfaceView: UIView {
         sampleLayer.backgroundColor = UIColor.black.cgColor
         layer.addSublayer(nativeLayer)
         layer.addSublayer(sampleLayer)
+        addSubview(bulletOverlay)
         nativeLayer.isHidden = true
         sampleLayer.isHidden = true
         isAccessibilityElement = false
@@ -142,6 +144,8 @@ final class VideoSurfaceView: UIView {
         nativeLayer.frame = bounds
         sampleLayer.frame = bounds
         CATransaction.commit()
+        bulletOverlay.frame = bounds
+        bulletOverlay.render()
         onResize?(bounds.size)
     }
 
